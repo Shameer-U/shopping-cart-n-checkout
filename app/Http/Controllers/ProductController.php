@@ -143,14 +143,11 @@ class ProductController extends Controller
         $order->cart = serialize($cart);
         $order->address = $request->input('address');
         $order->name = $request->input('name');
-        $order->payment_id = $charge->id;
+        $order->payment_id = $request->input('payment-id');
+        Auth::user()->orders()->save($order);
 
-        return redirect()->route('product.index');
-    }
-
-    public function afterPayment()
-    {
-        echo 'Payment Received, Thanks you for using our services.';
+        Session::forget('cart');
+        return redirect()->route('product.index')->with('success', 'Successfully purchased products');
     }
 
 }

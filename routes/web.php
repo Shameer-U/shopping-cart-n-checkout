@@ -28,5 +28,5 @@ Route::middleware('auth')->get('/shopping-cart',[App\Http\Controllers\ProductCon
 Route::middleware('auth')->get('/checkout',[App\Http\Controllers\ProductController::class, 'getCheckout'])->name('checkout');
 //Route::middleware('auth')->post('/checkout',[App\Http\Controllers\ProductController::class, 'postCheckout'])->name('checkout');
 Route::post('/checkout-cashier',[App\Http\Controllers\ProductController::class, 'checkoutCashier']);
-Route::post('/checkout-stripe',[App\Http\Controllers\ProductController::class, 'checkoutStripe']);
+Route::post('/post-checkout-stripe',[App\Http\Controllers\ProductController::class, 'postCheckoutStripe']);
 Route::post('/after-payment', [App\Http\Controllers\ProductController::class, 'afterPayment']);

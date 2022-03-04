@@ -14,13 +14,33 @@
     <div class="container" style="margin-top:10%;margin-bottom:10%">
         <div class="row justify-content-center">
             <div class="col-md-12">
-                <div class="">
-                    <p>Your Total Amount is 100 AED</p>
-                </div>
                 <div class="card">
-                    <form action="{{ url('/after-payment') }}"  method="post" id="payment-form">
-                        @csrf                    
-                        <div class="form-group">
+                    <form action="{{ url('/post-checkout-stripe') }}"  method="post" id="payment-form">
+                        @csrf 
+                        <div>
+                            <div class="card-header">
+                                <label for="card-element">
+                                    Enter your details
+                                </label>
+                            </div>
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        <label for="name">Name</label>
+                                        <input type="text" id="name" class="form-control" required name="name">
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="address">Address</label>
+                                        <input type="text" id="address" class="form-control"  required name="address">
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="card-name">Card Holder Name</label>
+                                        <input type="text" id="card-name" class="form-control" required> 
+                                    </div> 
+                                </div> 
+                            </div>  
+                        </div>              
+                        <div>
                             <div class="card-header">
                                 <label for="card-element">
                                     Enter your credit card information
@@ -35,14 +55,10 @@
                                 <input type="hidden" name="plan" value="" />
                             </div>
                         </div>
+                        <input type="hidden" id="payment-id" name="payment-id" value="" />
                         <div class="card-footer">
-                          <button
-                          id="card-button"
-                          class="btn btn-dark"
-                          type="submit"
-                          data-secret="{{ $intent }}"
-                          > Pay </button>
-                      </div>
+                          <button id="card-button" class="btn btn-dark" type="submit" data-secret="{{ $intent }}"> Pay </button>
+                        </div>
                   </form>
               </div>
           </div>
@@ -108,7 +124,7 @@
                 } else {
                     if (result.paymentIntent.status === 'succeeded') {
                         alert("Payment successfully completed (Method 1)")
-                        //form.submit();
+                        form.submit();
                     }
                 }
             });
@@ -123,8 +139,8 @@
                 payment_method: {
                     card: cardElement,
                     billing_details: {
-                        name: 'shameer',
-                        email: 'shameershahul@gmail.com'
+                        name: '{{ auth()->user()->name }}',
+                        email: '{{ auth()->user()->email }}'
                     }
                 },
                 setup_future_usage: 'off_session'
@@ -136,7 +152,9 @@
                 } else {
                     // The payment has been processed!
                     if (result.paymentIntent.status === 'succeeded') {
+                        document.getElementById('payment-id').value = result.paymentIntent.id;
                         alert("Payment successfully completed (Method 2)");
+                        form.submit();
                     }
                 }
             });
